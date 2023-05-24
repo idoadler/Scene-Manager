@@ -170,3 +170,28 @@ func fade_in(setted_options: Dictionary = {}) -> void:
 	is_transitioning = false
 	transition_finished.emit()
 	options["on_fade_in"].call()
+
+### ADDED TO SUPPORCT PACKED SCENE - IDO
+func change_scene_to_file(scene: PackedScene, setted_options: Dictionary = {}) -> void:
+	var options = _get_final_options(setted_options)
+	if not options["skip_fade_out"]:
+		await fade_out(setted_options)
+	if not options["skip_scene_change"]:
+		if scene == null:
+			_reload_scene()
+		else:
+			_replace_scene_file(scene, options)
+	await _tree.create_timer(options["wait_time"]).timeout
+	if not options["skip_fade_in"]:
+		await fade_in(setted_options)
+
+### ADDED TO SUPPORCT PACKED SCENE - IDO
+func _replace_scene_file(scene: PackedScene, options: Dictionary) -> void:
+	_current_scene.queue_free()
+	scene_unloaded.emit()
+	_current_scene = scene.instantiate()
+	_current_scene.tree_entered.connect(options["on_tree_enter"].bind(_current_scene))
+	_current_scene.ready.connect(options["on_ready"].bind(_current_scene))
+	await _tree.create_timer(0.0).timeout
+	_root.add_child(_current_scene)
+	_tree.set_current_scene(_current_scene)
