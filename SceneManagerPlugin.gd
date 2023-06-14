@@ -4,7 +4,7 @@ var _inspector_plugin
 
 func _enter_tree():
 	add_autoload_singleton("SceneManager", "res://addons/scene_manager/SceneManager.tscn")
-	_inspector_plugin = load("res://addons/scene_manager/NodeFlagsInspectorPlugin.gd").new()
+	_inspector_plugin = load("res://addons/scene_manager/NodeFlagsInspectorPlugin.gd")
 	add_inspector_plugin(_inspector_plugin)
 
 
